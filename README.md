@@ -1,5 +1,5 @@
 # Diffusion-Limited-Aggregation
-![alt text](fractal.PNG (file://LAPTOP-M89QT3LQ/Users/jack/Downloads/fractal.PNG))
+![fractal](https://user-images.githubusercontent.com/73403239/207200254-93436730-273c-429d-a3e4-aae052db322b.PNG)
 
 Uses several optimization tactics to simulate Diffusion Limited Aggregation with Pygame.
 
