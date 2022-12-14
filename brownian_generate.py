@@ -8,25 +8,34 @@ Simulates DLA using Pygame
 """
 
 import random
-from random import choice
 import pygame
 import math
+
 from ast import literal_eval
-from re import findall
 from sys import exit
+
+from configparser import ConfigParser
 
 pygame.init()
 pygame.font.init()
 
-# Waits for enter key to be pressed (4 indents ugh!)
+# Waits for enter key to be pressed
 def wait():
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                return
+        event = pygame.event.poll()
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            return
+
+# Exit event handling code for pygame
+def exit_handle():
+    event = pygame.event.poll()
+    if event.type == pygame.QUIT:
+        pygame.quit()
+        exit()
+    return
 
 # Draws a 5x5 seed and places it in the center of the screen 
 def start_seed():
@@ -50,12 +59,6 @@ def next_move(particle, r):
     new_x = random.randint(-1, 1)
     new_y = random.randint(-1, 1)
     particle.move_ip(new_x, new_y)
-
-    # Keep particle on screen
-    if particle.left < 0 or particle.left > width:
-        particle.move_ip(new_x * -1, 0)
-    if particle.top < 0 or particle.top > height:
-        particle.move_ip(0, new_y * -1)
     
     # Keep particle in circle
     center_x, center_y = (width / 2), (height / 2)
@@ -66,7 +69,7 @@ def next_move(particle, r):
     return (new_x, new_y)
 
 
-# Checks if particle collides with tree
+# Checks if particle is still uncollided
 def check_collision(particle, tree):
     if particle.collidelist(tree) != -1:
         tree.append(particle)
@@ -82,32 +85,26 @@ def gen_radius(tree):
         dist = math.sqrt((rect.left - cntr_x) ** 2 + (rect.top - cntr_y) ** 2)
         if dist > greatest_dist:
             greatest_dist = dist
-    return greatest_dist + 10 # Adds 2 particle diameters for more accurate sim
+    return greatest_dist + 10 # Adds 2 particle diameters for accurate sim
 
 #                   _____Main loop and simulation______
 while True:
 
-    # Grabs and sets settings from config.txt using regex to grab numbers
-    with open("FinalProject/config.txt") as f:
-        settings = [line.rstrip() for line in f]
-        gen_settings = findall(r"[-+]?(?:\d*\.*\d+)", "".join(settings[:5]))
-    
-    width = int(gen_settings[0])
-    height = int(gen_settings[1])
-    particle_number = int(gen_settings[2])
+    # Reads config file for settings
+    config = ConfigParser()
+    config.read("config.cfg")
+    settings = dict(config.items("SIM_SETTINGS"))
 
-    # Check if random seed is entered or is generated
-    randgen_seed = float(gen_settings[3])
-    if randgen_seed != 0:
-        random.seed(randgen_seed)
-    else:
+    width = int(settings["width"])
+    height = int(settings["height"])
+    particle_number = int(settings["particle-number"])
+    color_lst = literal_eval(settings["color-list"])
+
+    # Sets or generates random seed
+    try:
+        random.seed(float(settings["set-random-seed"]))
+    except ValueError:
         random.seed()
-    
-    # Sets color tuple list from config.txt dynamically beginning at line 8
-    color_lst = []
-    for i in range(7, len(settings)):
-        color_lst.append(literal_eval(settings[i])) # literal_eval is safe!
-    color_margin = particle_number / len(color_lst)
 
     # Sets up pygame window
     screen = pygame.display.set_mode((width, height))
@@ -132,8 +129,8 @@ while True:
         dettatched = True
         while dettatched:
 
-            # Clear event queue to prevent crashing while not handling events
-            pygame.event.clear()
+            # Ensures user can quit during simulation
+            exit_handle()
 
             # Random walk
             new_x, new_y = next_move(particle, radius)
@@ -142,12 +139,10 @@ while True:
             dettatched = check_collision(particle, tree)
                 
         # Re-adjusts particle to be adjacent to collision
-        if new_x != 0:
-            particle.move_ip(new_x * -1, 0)
-        if new_y != 0:
-            particle.move_ip(0, new_y * -1)
+        particle.move_ip(new_x * -1, new_y * -1)
         
-        # Change color based on time added
+        # Change color based on list, divide colors evenly
+        color_margin = particle_number / len(color_lst)
         try:
             particle_color = color_lst[int(i / color_margin)]
         except IndexError:
