@@ -3,7 +3,7 @@
 
 Uses several optimization tactics to simulate Diffusion Limited Aggregation with Pygame.
 
-Coded in Python, all settings can be changed in the file 'config.txt'. Please only edit the number fields of this file, however the color list may be added on to as seen fit.
+Coded in Python, all settings can be changed in the file 'config.cfg'. Keep the field 'set-random-seed' blank if you wish to generate a new fractal each time.
 
 It is necessay to have Pygame installed to execute this code. See the pygame documentation for install instructions.
 
