@@ -38,9 +38,9 @@ def exit_handle():
         exit()
     return
 
-# Draws a 5x5 seed and places it in the center of the screen 
-def start_seed():
-    seed = pygame.Rect((((width - 5) / 2), ((height - 5) / 2)), (5, 5))
+# Draws a seed particle and places it in the center of the screen 
+def start_seed(particle_width):
+    seed = pygame.Rect((((width - particle_width) / 2), ((height - particle_width) / 2)), (particle_width, particle_width))
     pygame.draw.rect(screen, (0, 255, 0), seed)
     tree.append(seed)
     pygame.display.update(seed)
@@ -79,14 +79,14 @@ def check_collision(particle, tree, k_stick):
         return True
 
 # Returns distance from seed to farthest particle
-def gen_radius(tree):
+def gen_radius(tree, particle_width):
     cntr_x, cntr_y = tree[0].left, tree[0].top
     greatest_dist = 0
     for rect in tree:
         dist = math.sqrt((rect.left - cntr_x) ** 2 + (rect.top - cntr_y) ** 2)
         if dist > greatest_dist:
             greatest_dist = dist
-    return greatest_dist + 2(5) # Adds 2 particle diameters to entry radius
+    return greatest_dist + (2*particle_width) # Adds 2 particle diameters to entry radius
 
 #                   _____Main loop and simulation______
 while True:
@@ -99,8 +99,10 @@ while True:
     width = int(settings["width"])
     height = int(settings["height"])
     particle_number = int(settings["particle-number"])
+    particle_width = int(settings["particle-width"])
     stick_chance = float(settings["stick-chance"])
     color_lst = literal_eval(settings["color-list"])
+    
 
     # Sets or generates random seed
     try:
@@ -117,15 +119,15 @@ while True:
 
     # Resets tree, creates seed
     tree = []
-    start_seed()
+    start_seed(particle_width)
 
     for i in range(particle_number):
 
         # Set radius so that the circle tightly encloses the tree
-        radius = gen_radius(tree)
+        radius = gen_radius(tree, particle_width)
 
         # Generates particle on edge of bounding circle
-        particle = pygame.Rect(position_gen(radius), (5, 5))
+        particle = pygame.Rect(position_gen(radius), (particle_width, particle_width))
 
         # Simulates particle until it attatches to tree
         dettatched = True
