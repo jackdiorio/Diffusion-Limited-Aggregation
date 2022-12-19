@@ -21,6 +21,7 @@ pygame.font.init()
 
 # Waits for enter key to be pressed
 def wait():
+
     while True:
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
@@ -143,10 +144,8 @@ while True:
         
         # Change color based on list, divide colors evenly
         color_margin = particle_number / len(color_lst)
-        try:
-            particle_color = color_lst[int(i / color_margin)]
-        except IndexError:
-            particle_color = color_lst[-1]
+        
+        particle_color = color_lst[int(i / color_margin)]
 
         # Draw when done walking
         pygame.draw.rect(screen, particle_color, particle)
