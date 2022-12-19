@@ -70,9 +70,9 @@ def next_move(particle, r):
     return (new_x, new_y)
 
 
-# Checks if particle is still uncollided
-def check_collision(particle, tree):
-    if particle.collidelist(tree) != -1:
+# Checks if particle is dettatched from tree and sticks due to k_stick
+def check_collision(particle, tree, k_stick):
+    if particle.collidelist(tree) != -1 and random.random() < k_stick:
         tree.append(particle)
         return False
     else:
@@ -99,6 +99,7 @@ while True:
     width = int(settings["width"])
     height = int(settings["height"])
     particle_number = int(settings["particle-number"])
+    stick_chance = float(settings["stick-chance"])
     color_lst = literal_eval(settings["color-list"])
 
     # Sets or generates random seed
@@ -137,7 +138,7 @@ while True:
             new_x, new_y = next_move(particle, radius)
 
             # Check for particle collision with tree
-            dettatched = check_collision(particle, tree)
+            dettatched = check_collision(particle, tree, stick_chance)
                 
         # Re-adjusts particle to be adjacent to collision
         particle.move_ip(new_x * -1, new_y * -1)
