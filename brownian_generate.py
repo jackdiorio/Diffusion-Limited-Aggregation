@@ -103,7 +103,6 @@ while True:
     stick_chance = float(settings["stick-chance"])
     color_lst = literal_eval(settings["color-list"])
     
-
     # Sets or generates random seed
     try:
         random.seed(float(settings["set-random-seed"]))
