@@ -86,7 +86,7 @@ def gen_radius(tree):
         dist = math.sqrt((rect.left - cntr_x) ** 2 + (rect.top - cntr_y) ** 2)
         if dist > greatest_dist:
             greatest_dist = dist
-    return greatest_dist + 2(5) # Adds 2 particle diameters for accurate sim
+    return greatest_dist + 2(5) # Adds 2 particle diameters to entry radius
 
 #                   _____Main loop and simulation______
 while True:
