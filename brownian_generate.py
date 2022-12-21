@@ -49,11 +49,10 @@ def start_seed(particle_width):
 def position_gen(r):
     center_x, center_y = (width / 2), (height / 2)
     rand_x, rand_y = -1, -1
-    while (rand_x - center_x) ** 2 + (rand_y - center_y) ** 2 != r ** 2:
-        angle = 2 * math.pi * random.random()
-        rand_x = r * math.cos(angle) + center_x
-        rand_y = r * math.sin(angle) + center_y
-    return (rand_x, rand_y)
+    angle = 2 * math.pi * random.random()
+    rand_x = r * math.cos(angle) + center_x
+    rand_y = r * math.sin(angle) + center_y
+    return (rand_x, rand_y) 
 
 # Returns a tuple of (x, y) coordinates after random walk with constraints
 def next_move(particle, r):
