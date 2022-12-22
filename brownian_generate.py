@@ -21,7 +21,6 @@ pygame.font.init()
 
 # Waits for enter key to be pressed
 def wait():
-
     while True:
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
@@ -55,9 +54,9 @@ def position_gen(r):
     return (rand_x, rand_y) 
 
 # Returns a tuple of (x, y) coordinates after random walk with constraints
-def next_move(particle, r):
-    new_x = random.randint(-1, 1)
-    new_y = random.randint(-1, 1)
+def next_move(particle, r, step):
+    new_x = random.choice([(step * -1), 0, step])
+    new_y = random.choice([(step * -1), 0, step])
     particle.move_ip(new_x, new_y)
     
     # Keep particle in circle
@@ -77,7 +76,7 @@ def check_collision(particle, tree, k_stick):
     else:
         return True
 
-# Returns distance from seed to farthest particle
+# Returns distance from seed to farthest particle + 2 particle diameters
 def gen_radius(tree, particle_width):
     cntr_x, cntr_y = tree[0].left, tree[0].top
     greatest_dist = 0
@@ -85,7 +84,18 @@ def gen_radius(tree, particle_width):
         dist = math.sqrt((rect.left - cntr_x) ** 2 + (rect.top - cntr_y) ** 2)
         if dist > greatest_dist:
             greatest_dist = dist
-    return greatest_dist + (2*particle_width) # Adds 2 particle diameters to entry radius
+    return greatest_dist + (2 * particle_width)
+
+# Checks if particle is near tree and if not, sets step size to particle_width
+def check_neighbors(particle, tree, particle_width):
+    growth = particle_width * 2
+    particle.inflate_ip(growth, growth)
+    if particle.collidelist(tree) != -1:
+        particle.inflate_ip((growth * -1), (growth * -1))
+        return 1
+    else:
+        particle.inflate_ip((growth * -1), (growth * -1))
+        return particle_width
 
 #                   _____Main loop and simulation______
 while True:
@@ -134,8 +144,11 @@ while True:
             # Ensures user can quit during simulation
             exit_handle()
 
+            # Sets step_size after checking for adjacent particles
+            step_size = check_neighbors(particle, tree, particle_width)
+
             # Random walk
-            new_x, new_y = next_move(particle, radius)
+            new_x, new_y = next_move(particle, radius, step_size)
 
             # Check for particle collision with tree
             dettatched = check_collision(particle, tree, stick_chance)
