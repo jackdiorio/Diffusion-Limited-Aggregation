@@ -8,3 +8,5 @@ Coded in Python, all settings can be changed in the file 'config.cfg'. Keep the 
 It is necessay to have Pygame installed to execute this code. See the pygame documentation for install instructions.
 
 Created by Jack D'Iorio, open-source to all, please credit if used. Thank you!
+
+![image](https://user-images.githubusercontent.com/73403239/209227395-b1c168f8-cc63-4030-850d-539444541640.png)
