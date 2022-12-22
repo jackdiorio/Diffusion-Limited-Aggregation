@@ -4,7 +4,6 @@ jcdiorio@uvm.edu
 CS 021
 
 Simulates DLA using Pygame
-
 """
 
 import random
@@ -38,8 +37,9 @@ def exit_handle():
     return
 
 # Draws a seed particle and places it in the center of the screen 
-def start_seed(particle_width):
-    seed = pygame.Rect((((width - particle_width) / 2), ((height - particle_width) / 2)), (particle_width, particle_width))
+def start_seed(particle_size):
+    center_x, center_y = (width / 2), (height / 2)
+    seed = pygame.Rect((center_x, center_y), (particle_size, particle_size))
     pygame.draw.rect(screen, (0, 255, 0), seed)
     tree.append(seed)
     pygame.display.update(seed)
@@ -67,7 +67,6 @@ def next_move(particle, r, step):
     
     return (new_x, new_y)
 
-
 # Checks if particle is dettatched from tree and sticks due to k_stick
 def check_collision(particle, tree, k_stick):
     if particle.collidelist(tree) != -1 and random.random() < k_stick:
@@ -77,25 +76,25 @@ def check_collision(particle, tree, k_stick):
         return True
 
 # Returns distance from seed to farthest particle + 2 particle diameters
-def gen_radius(tree, particle_width):
+def gen_radius(tree, particle_size):
     cntr_x, cntr_y = tree[0].left, tree[0].top
     greatest_dist = 0
     for rect in tree:
         dist = math.sqrt((rect.left - cntr_x) ** 2 + (rect.top - cntr_y) ** 2)
         if dist > greatest_dist:
             greatest_dist = dist
-    return greatest_dist + (2 * particle_width)
+    return greatest_dist + (2 * particle_size)
 
 # Checks if particle is near tree and if not, sets step size to particle_width
-def check_neighbors(particle, tree, particle_width):
-    growth = particle_width * 2
+def check_neighbors(particle, tree, particle_size):
+    growth = particle_size * 2
     particle.inflate_ip(growth, growth)
     if particle.collidelist(tree) != -1:
         particle.inflate_ip((growth * -1), (growth * -1))
         return 1
     else:
         particle.inflate_ip((growth * -1), (growth * -1))
-        return particle_width
+        return particle_size
 
 #                   _____Main loop and simulation______
 while True:
@@ -135,7 +134,8 @@ while True:
         radius = gen_radius(tree, particle_width)
 
         # Generates particle on edge of bounding circle
-        particle = pygame.Rect(position_gen(radius), (particle_width, particle_width))
+        gen_coords = position_gen(radius)
+        particle = pygame.Rect(gen_coords, (particle_width, particle_width))
 
         # Simulates particle until it attatches to tree
         dettatched = True
@@ -158,7 +158,6 @@ while True:
         
         # Change color based on list, divide colors evenly
         color_margin = particle_number / len(color_lst)
-        
         particle_color = color_lst[int(i / color_margin)]
 
         # Draw when done walking
