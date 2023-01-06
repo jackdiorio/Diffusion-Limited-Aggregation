@@ -36,7 +36,7 @@ def exit_handle():
         exit()
     return
 
-# Draws a seed particle and places it in the center of the screen 
+# Draws a seed particle and places it in the center of the canvas
 def start_seed(particle_size):
     center_x, center_y = (width / 2), (height / 2)
     seed = pygame.Rect((center_x, center_y), (particle_size, particle_size))
