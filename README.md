@@ -1,5 +1,5 @@
 # Diffusion-Limited-Aggregation
-![image](https://user-images.githubusercontent.com/73403239/209227395-b1c168f8-cc63-4030-850d-539444541640.png)
+![image](https://user-images.githubusercontent.com/73403239/212571072-139846b2-9f0c-4bfb-9eb8-fe3eb563ba2b.png)
 
 Uses several optimization tactics to simulate Diffusion Limited Aggregation with Pygame.
 
